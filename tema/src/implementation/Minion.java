@@ -1,4 +1,4 @@
-package Implementation;
+package implementation;
 
 import java.util.ArrayList;
 
@@ -69,7 +69,6 @@ class The_Ripper extends Minion {
     public The_Ripper(int mana, String description, ArrayList<String> colors, int health, int attackDamage, String name) {
         super(mana, description, colors, health, attackDamage, name);
     }
-    SBGW s;
     protected void action(Minion minion) {
         minion.setAttackDamage(getAttackDamage() - 2);
     }
