@@ -1,76 +1,26 @@
 package implementation;
 
-import implementation.card.Card;
-import implementation.card.environment.Environment;
-import implementation.card.hero.Hero;
-import implementation.card.minion.Minion;
-
 import java.util.ArrayList;
 
-public class Game {
+class Game {
     private static Game instance = null;
     private static int instCount = 0;
     private Player player1;
     private Player player2;
-    private int shuffleSeed;
     private int currPlayerIdx;
-    private int startingPlayer;
-    private ArrayList<ArrayList<Minion>> table;
+    private Minion[][] table;
     private int roundCount = 1;
 
-    private Game(Player player1, Player player2) {
+    private Game() {
         ++instCount;
-
-        table = new ArrayList<ArrayList<Minion>>();
-        for (int i = 0; i < 4; ++i) {
-            ArrayList<Minion> row = new ArrayList<Minion>();
-            table.add(row);
-        }
-
-        this.player1 = player1;
-        this.player2 = player2;
+        table = new Minion[5][5];
     }
 
-    public Player getPlayer1() {
-        return player1;
-    }
-
-    public void setPlayer1(Player player1) {
-        this.player1 = player1;
-    }
-
-    public Player getPlayer2() {
-        return player2;
-    }
-
-    public void setPlayer2(Player player2) {
-        this.player2 = player2;
-    }
-
-    public int getShuffleSeed() {
-        return shuffleSeed;
-    }
-
-    public void setShuffleSeed(int shuffleSeed) {
-        this.shuffleSeed = shuffleSeed;
-    }
-
-    public static Game initializeGame(Player player1, Player player2) {
+    public static Game startGame() {
         if (instance == null)
-            instance = new Game(player1, player2);
+            instance = new Game();
 
         return instance;
-    }
-
-    public static void setup(int playerOneDeckIdx, int playerTwoDeckIdx,
-                      int shuffleSeed, Hero playerOneHero, Hero playerTwoHero, int startingPlayer) {
-        instance.setShuffleSeed(shuffleSeed);
-        instance.setPlayerHero(instance.player1, playerOneHero);
-        instance.setPlayerHero(instance.player2, playerTwoHero);
-        instance.setStartingPlayer(startingPlayer);
-        instance.setCurrPlayerIdx(startingPlayer);
-        instance.setDeckIdx(instance.player1, playerOneDeckIdx);
-        instance.setDeckIdx(instance.player2, playerTwoDeckIdx);
     }
 
     public static int getNumberOfGames() {
@@ -110,12 +60,11 @@ public class Game {
         this.currPlayerIdx = currPlayerIdx;
     }
 
-    public int getStartingPlayer() {
-        return startingPlayer;
-    }
-
-    public void setStartingPlayer(int startingPlayer) {
-        this.startingPlayer = startingPlayer;
+    private void setStartingPlayer1(int startingPlayerIdx) {
+        if (startingPlayerIdx == 1)
+            this.currPlayerIdx = 1;
+        else
+            this.currPlayerIdx = 2;
     }
 
     private Hero getPlayerHero(int playerIdx) {
@@ -140,8 +89,8 @@ public class Game {
     }
 
     private Card getCardAtPosition(int x, int y) {
-        if (table.get(x).get(y) != null)
-            return table.get(x).get(y);
+        if (table[x][y] != null)
+            return table[x][y];
         else
             // System.out.println("No card at that position");
             return null;
@@ -159,8 +108,8 @@ public class Game {
 
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; ++j)
-                if (table.get(i).get(j).isFrozen())
-                    frozenCards.add(table.get(i).get(j));
+                if (table[i][j].isFrozen())
+                    frozenCards.add(table[i][j]);
 
         return frozenCards;
     }
