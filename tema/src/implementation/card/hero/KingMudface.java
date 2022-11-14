@@ -9,7 +9,7 @@ public class KingMudface extends Hero {
         super(mana, description, colors, name);
     }
 
-    protected void action(ArrayList<Minion> minions) {
+    public void action(ArrayList<Minion> minions) {
         for (Minion minion : minions) {
             minion.setHealth(minion.getHealth() + 1);
         }

@@ -8,7 +8,6 @@ public class TheCursedOne extends Minion {
     }
 
     public void action(Minion minion) {
-        System.out.println("thecursedone");
         int hp = minion.getHealth();
         int atk = minion.getAttackDamage();
 

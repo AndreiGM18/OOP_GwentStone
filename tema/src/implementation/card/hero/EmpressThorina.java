@@ -10,7 +10,7 @@ public class EmpressThorina extends Hero {
         super(mana, description, colors, name);
     }
 
-    protected void action(ArrayList<Minion> minions) {
-        minions.stream().max(new MaxbyHP()).get().setHealth(0);
+    public void action(ArrayList<Minion> minions) {
+        minions.remove(minions.stream().max(new MaxbyHP()).get());
     }
 }

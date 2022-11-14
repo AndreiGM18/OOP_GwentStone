@@ -7,7 +7,6 @@ public class TheRipper extends Minion {
         super(mana, description, colors, health, attackDamage, name);
     }
     public void action(Minion minion) {
-        System.out.println("theripper");
         minion.setAttackDamage(Math.max(minion.getAttackDamage() - 2, 0));
 
         this.hasAttacked = true;

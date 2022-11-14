@@ -55,7 +55,7 @@ public class Minion extends Card {
     }
 
     public void attackHero(Hero hero) {
-        hero.setHealth(hero.getHealth() - this.attackDamage);
+        hero.setHealth(Math.max(hero.getHealth() - this.attackDamage, 0));
         this.hasAttacked = true;
     }
 

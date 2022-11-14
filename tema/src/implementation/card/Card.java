@@ -97,6 +97,4 @@ public abstract class Card {
                 ", name='" + name + '\'' +
                 '}';
     }
-    public void action() {
-    }
 }

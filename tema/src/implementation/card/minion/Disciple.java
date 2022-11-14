@@ -8,7 +8,6 @@ public class Disciple extends Minion {
     }
 
     public void action(Minion minion) {
-        System.out.println("disciple");
         minion.setHealth(minion.getHealth() + 2);
         this.hasAttacked = true;
     }

@@ -5,7 +5,7 @@ import implementation.card.environment.Environment;
 import implementation.card.environment.Firestorm;
 import implementation.card.environment.HeartHound;
 import implementation.card.environment.Winterfell;
-import implementation.card.hero.Hero;
+import implementation.card.hero.*;
 import implementation.card.minion.*;
 
 import java.util.ArrayList;
@@ -43,6 +43,8 @@ public class Game {
     }
 
     public void nextTurn() {
+        this.getCurrPlayer().getHero().setHasAttacked(false);
+
         if (currPlayerIdx == 1) {
             for (int i = 0; i < 5; i++) {
                 try {
@@ -395,9 +397,6 @@ public class Game {
             }
         }
 
-        System.out.println(cardAttacker.createCardNode());
-        System.out.println(cardAttacked.createCardNode());
-
         if (cardAttacker instanceof Miraj)
             ((Miraj)cardAttacker).action(cardAttacked);
         if (cardAttacker instanceof TheRipper)
@@ -447,6 +446,48 @@ public class Game {
         if (hero.getHealth() == 0)
             return Integer.toString(currPlayerIdx);
 
+        return null;
+    }
+
+    public String useHeroAbility(int affectedRow) {
+        Hero hero = this.getCurrPlayer().getHero();
+
+        if (this.getCurrPlayer().getMana() < hero.getMana())
+            return "Not enough mana to use hero's ability.";
+
+        if (hero.hasAttacked())
+            return "Hero has already attacked this turn.";
+
+        if (hero instanceof LordRoyce || hero instanceof EmpressThorina) {
+            if ((currPlayerIdx == 1 && (affectedRow == 3 || affectedRow == 2)) || (currPlayerIdx == 2 &&
+                    (affectedRow == 1 || affectedRow == 0))) {
+                System.out.println(affectedRow);
+                System.out.println(currPlayerIdx);
+                return "Selected row does not belong to the enemy.";
+            }
+        } else if (hero instanceof GeneralKocioraw || hero instanceof KingMudface) {
+            if ((currPlayerIdx == 1 && (affectedRow == 1 || affectedRow == 0)) || (currPlayerIdx == 2 &&
+                    (affectedRow == 3 || affectedRow == 2))) {
+                return "Selected row does not belong to the current player.";
+            }
+        }
+
+        ArrayList<Minion> minions = this.getTable().get(affectedRow);
+
+        if (hero instanceof EmpressThorina)
+            ((EmpressThorina)hero).action(minions);
+
+        if (hero instanceof GeneralKocioraw)
+            ((GeneralKocioraw)hero).action(minions);
+
+        if (hero instanceof KingMudface)
+            ((KingMudface)hero).action(minions);
+
+        if (hero instanceof LordRoyce)
+            ((LordRoyce)hero).action(minions);
+
+        this.getCurrPlayer().setMana(this.getCurrPlayer().getMana() - hero.getMana());
+        hero.setHasAttacked(true);
         return null;
     }
 

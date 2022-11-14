@@ -350,6 +350,20 @@ public final class Main {
                         }
                     }
                 }
+
+                if (command.equals("useHeroAbility")) {
+                    int affectedRow = action.getAffectedRow();
+
+                    String error = game.useHeroAbility(affectedRow);
+
+                    if (error != null) {
+                        node.put("command", command);
+                        node.put("affectedRow", affectedRow);
+                        node.put("error", error);
+
+                        output.add(node);
+                    }
+                }
             }
         }
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();

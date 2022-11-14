@@ -9,7 +9,7 @@ public class GeneralKocioraw extends Hero {
         super(mana, description, colors, name);
     }
 
-    protected void action(ArrayList<Minion> minions) {
+    public void action(ArrayList<Minion> minions) {
         for (Minion minion : minions) {
             minion.setAttackDamage(minion.getAttackDamage() + 1);
         }

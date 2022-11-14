@@ -65,9 +65,9 @@ public class Setup {
         String name = heroInput.getName();
 
         return switch (name) {
-            case "EmpressThorina" -> new EmpressThorina(mana, description, colors, name);
-            case "KingMudface" -> new KingMudface(mana, description, colors, name);
-            case "GeneralKocioraw" -> new GeneralKocioraw(mana, description, colors, name);
+            case "Empress Thorina" -> new EmpressThorina(mana, description, colors, name);
+            case "King Mudface" -> new KingMudface(mana, description, colors, name);
+            case "General Kocioraw" -> new GeneralKocioraw(mana, description, colors, name);
             default -> new LordRoyce(mana, description, colors, name);
         };
 

@@ -10,7 +10,15 @@ public class LordRoyce extends Hero {
         super(mana, description, colors, name);
     }
 
-    protected void action(ArrayList<Minion> minions) {
-        minions.stream().max(new MaxbyATK()).get().setFrozen(true);
+    public void action(ArrayList<Minion> minions) {
+        if (minions.size() == 1)
+            minions.get(0).setFrozen(true);
+
+        try {
+            minions.stream().max(new MaxbyATK()).get().setFrozen(true);
+        }
+        catch (Exception e) {
+
+        }
     }
 }
