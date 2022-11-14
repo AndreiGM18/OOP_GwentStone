@@ -103,25 +103,28 @@ public class Player {
         this.wins = wins;
     }
 
-    public void addMinionRows(ArrayList<Minion> row, Card card) {
+    public String addMinionRows(Game game, int idx, Card card) {
         if (card instanceof Environment)
-            System.out.println("Cannot place environment card on table.");
+            return "Cannot place environment card on table.";
         else {
             if (card.getMana() > this.mana)
-                System.out.println("Not enough mana to place card on table.");
+                return "Not enough mana to place card on table.";
             else {
-                if (row.size() == 5)
-                    System.out.println("Cannot place card on table since row is full.");
+                if (game.getTable().get(idx).size() == 5)
+                    return "Cannot place card on table since row is full.";
                 else {
                     this.mana -= card.getMana();
-                    row.add((Minion) card);
+                    game.getTable().get(idx).add((Minion) card);
+                    hand.remove(card);
+                    return null;
                 }
             }
         }
     }
 
     public void addCardHand() {
-        this.hand.add(currDeck.remove(0));
+        if (currDeck.size() != 0)
+            this.hand.add(currDeck.remove(0));
     }
 
     public ArrayList<Environment> getEnvironmentCards() {

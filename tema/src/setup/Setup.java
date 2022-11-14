@@ -45,7 +45,7 @@ public class Setup {
                     case "Disciple" -> new Disciple(mana, description, colors, health, attackDamage, name);
                     case "Firestorm" -> new Firestorm(mana, description, colors, name);
                     case "Winterfell" -> new Winterfell(mana, description, colors, name);
-                    case "HeartHound" -> new HeartHound(mana, description, colors, name);
+                    case "Heart Hound" -> new HeartHound(mana, description, colors, name);
                     default -> new Minion(mana, description, colors, health, attackDamage, name);
                 };
 

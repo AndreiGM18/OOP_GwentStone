@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
 import implementation.card.Card;
+import implementation.card.minion.Minion;
 import setup.Setup;
 
 import java.io.File;
@@ -85,15 +86,15 @@ public final class Main {
 
             ArrayList<ActionsInput> actionsInput = inputData.getGames().get(i).getActions();
 
-            for (int j = 0; j < actionsInput.size(); ++j) {
+            for (ActionsInput action : actionsInput) {
 
-                ActionsInput action = actionsInput.get(j);
                 String command = action.getCommand();
 
                 ObjectNode node = objectMapper.createObjectNode();
-                node.put("command", command);
 
                 if (command.equals("getPlayerDeck")) {
+                    node.put("command", command);
+
                     int playerIdx = action.getPlayerIdx();
 
                     node.put("playerIdx", playerIdx);
@@ -101,9 +102,8 @@ public final class Main {
                     ArrayList<Card> cards = game.getPlayerbyIdx(playerIdx).getCurrDeck();
 
                     ArrayNode cardsNode = objectMapper.createArrayNode();
-                    for (int k = 0; k < cards.size(); k++) {
-                        //System.out.println(cards.get(k).toString());
-                        cardsNode.add(cards.get(k).createCardNode());
+                    for (Card card : cards) {
+                        cardsNode.add(card.createCardNode());
                     }
 
                     node.set("output", cardsNode);
@@ -111,42 +111,86 @@ public final class Main {
                 }
 
                 if (command.equals("getPlayerHero")) {
+                    node.put("command", command);
+
                     int playerIdx = action.getPlayerIdx();
                     node.put("playerIdx", playerIdx);
 
-                    ObjectNode heroNode = objectMapper.createObjectNode();
-                    heroNode = game.getPlayerbyIdx(playerIdx).getHero().createCardNode();
+                    ObjectNode heroNode = game.getPlayerbyIdx(playerIdx).getHero().createCardNode();
 
                     node.set("output", heroNode);
                     output.add(node);
                 }
 
                 if (command.equals("getPlayerTurn")) {
+                    node.put("command", command);
+
                     node.put("output", game.getCurrPlayerIdx());
                     output.add(node);
                 }
 
-//                if (command.equals("placeCard")) {
-//                    Card card = game.getCurrPlayer().getHand().get(action.getHandIdx());
-//
-//                    if (card instanceof Environment)
-//
-//                    int frontRow, backRow;
-//                    if (game.getCurrPlayerIdx() == 1) {
-//                        frontRow = 2;
-//                        backRow = 3;
-//                    } else {
-//                        frontRow = 1;
-//                        backRow = 0;
-//                    }
-//
-//                    if (card instanceof TheRipper || card instanceof Miraj || card instanceof Tank)
-//                        game.getTable().get(frontRow).add((Minion) card);
-//                    else
-//                        game.getTable().get(backRow).add((Minion) card);
-//
-//                    return "";
-//                }
+                if (command.equals("endPlayerTurn")) {
+                    game.nextTurn();
+                }
+
+                if (command.equals("placeCard")) {
+                    int handIdx = action.getHandIdx();
+
+                    String error = game.placeCard(handIdx);
+
+                    if (error != null) {
+                        node.put("command", command);
+                        node.put("handIdx", handIdx);
+                        node.put("error", error);
+                        output.add(node);
+                    }
+                }
+
+                if (command.equals("getCardsInHand")) {
+                    node.put("command", command);
+
+                    int playerIdx = action.getPlayerIdx();
+                    node.put("playerIdx", playerIdx);
+
+                    ArrayList<Card> cards = game.getPlayerbyIdx(playerIdx).getHand();
+
+                    ArrayNode cardsNode = objectMapper.createArrayNode();
+                    for (Card card : cards) {
+                        cardsNode.add(card.createCardNode());
+                    }
+
+                    node.set("output", cardsNode);
+                    output.add(node);
+                }
+
+                if (command.equals("getPlayerMana")) {
+                    node.put("command", command);
+
+                    int playerIdx = action.getPlayerIdx();
+                    node.put("playerIdx", playerIdx);
+
+                    node.put("output", game.getPlayerbyIdx(playerIdx).getMana());
+
+                    output.add(node);
+                }
+
+                if (command.equals("getCardsOnTable")) {
+                    node.put("command", command);
+
+                    ArrayList<ArrayList<Minion>> cardsOnTable = game.getTable();
+
+                    ArrayNode cardsNode = objectMapper.createArrayNode();
+                    for (ArrayList<Minion> cards : cardsOnTable) {
+                        ArrayNode cardArrayNode = objectMapper.createArrayNode();
+                        for (Minion card : cards)  {
+                            cardArrayNode.add(card.createCardNode());
+                        }
+                        cardsNode.add(cardArrayNode);
+                    }
+
+                    node.set("output", cardsNode);
+                    output.add(node);
+                }
             }
         }
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();

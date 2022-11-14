@@ -3,7 +3,7 @@ package implementation;
 import implementation.card.Card;
 import implementation.card.environment.Environment;
 import implementation.card.hero.Hero;
-import implementation.card.minion.Minion;
+import implementation.card.minion.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +18,7 @@ public class Game {
     private ArrayList<ArrayList<Minion>> table;
 
     private int roundCount = 1;
+    private boolean nextRound = true;
 
     public Game(Player player1, Player player2) {
         table = new ArrayList<>();
@@ -30,10 +31,29 @@ public class Game {
         this.player2 = new Player(player2);
     }
 
+    public void nextRound() {
+        ++roundCount;
+
+        player1.addCardHand();
+        player2.addCardHand();
+        addMana();
+    }
+
+    public void nextTurn() {
+        if (currPlayerIdx == 1)
+            currPlayerIdx = 2;
+        else
+            currPlayerIdx = 1;
+
+        nextRound = !nextRound;
+
+        if (nextRound)
+            nextRound();
+    }
+
     public Player getPlayer1() {
         return player1;
     }
-
 
     public Player getPlayer2() {
         return player2;
@@ -107,12 +127,6 @@ public class Game {
         this.player2.setMana(this.player2.getMana() + addedMana);
     }
 
-    public void endRound() {
-        ++roundCount;
-        player1.addCardHand();
-        player2.addCardHand();
-    }
-
     public void setDeckPlayer(Player player, int idx) {
         player.setCurrDeckIdx(idx);
     }
@@ -182,4 +196,24 @@ public class Game {
 
         return frozenCards;
     }
+
+    public String placeCard(int cardIdx) {
+        Card card = this.getCurrPlayer().getHand().get(cardIdx);
+
+        int frontRow, backRow;
+
+        if (this.getCurrPlayerIdx() == 1) {
+            frontRow = 2;
+            backRow = 3;
+        } else {
+            frontRow = 1;
+            backRow = 0;
+        }
+
+        if (card instanceof TheRipper || card instanceof Miraj || card instanceof Tank)
+            return this.getCurrPlayer().addMinionRows(this, frontRow, card);
+        else
+            return this.getCurrPlayer().addMinionRows(this, backRow, card);
+    }
+
 }
