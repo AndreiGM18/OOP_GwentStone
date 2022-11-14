@@ -10,11 +10,11 @@ public class HeartHound extends Environment {
         super(mana, description, colors, name);
     }
 
-    protected void action(ArrayList<Minion> minions, ArrayList<Minion> advMinions) {
+    public void action(ArrayList<Minion> minions, ArrayList<Minion> advMinions) {
         Minion maxMinion = minions.stream().max(new MaxbyHP()).get();
 
-        minions.remove(maxMinion);
+        minions.add(maxMinion);
 
-        advMinions.add(maxMinion);
+        advMinions.remove(maxMinion);
     }
 }

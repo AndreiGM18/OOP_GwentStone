@@ -7,13 +7,13 @@ public class Miraj extends Minion {
         super(mana, description, colors, health, attackDamage, name);
     }
 
-    protected void action(Minion minion) {
-        int hp = minion.getHealth();
+    public void action(Minion minion) {
+        int hp = this.health;
+        int advHP = minion.getHealth();
 
-        this.health = this.health ^ hp;
-        hp = this.health ^ minion.health;
-        this.health = this.health ^ hp;
-
+        this.health = advHP;
         minion.setHealth(hp);
+
+        this.hasAttacked = true;
     }
 }

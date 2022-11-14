@@ -9,8 +9,9 @@ public class Winterfell extends Environment {
         super(mana, description, colors, name);
     }
 
-    protected void action(ArrayList<Minion> minions) {
-        for (Minion minion : minions)
+    public void action(ArrayList<Minion> minions) {
+        for (Minion minion : minions) {
             minion.setFrozen(true);
+        }
     }
 }

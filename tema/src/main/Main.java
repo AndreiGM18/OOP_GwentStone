@@ -11,7 +11,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
 import implementation.card.Card;
+import implementation.card.environment.Environment;
 import implementation.card.minion.Minion;
+import implementation.card.utils.MaxbyATK;
+import implementation.card.utils.MaxbyHP;
 import setup.Setup;
 
 import java.io.File;
@@ -99,14 +102,14 @@ public final class Main {
 
                     node.put("playerIdx", playerIdx);
 
-                    ArrayList<Card> cards = game.getPlayerbyIdx(playerIdx).getCurrDeck();
+                    ArrayList<Card> cardss = game.getPlayerbyIdx(playerIdx).getCurrDeck();
 
-                    ArrayNode cardsNode = objectMapper.createArrayNode();
-                    for (Card card : cards) {
-                        cardsNode.add(card.createCardNode());
+                    ArrayNode cardsnNode = objectMapper.createArrayNode();
+                    for (Card card : cardss) {
+                        cardsnNode.add(card.createCardNode());
                     }
 
-                    node.set("output", cardsNode);
+                    node.set("output", cardsnNode);
                     output.add(node);
                 }
 
@@ -185,11 +188,167 @@ public final class Main {
                         for (Minion card : cards)  {
                             cardArrayNode.add(card.createCardNode());
                         }
+
                         cardsNode.add(cardArrayNode);
                     }
 
                     node.set("output", cardsNode);
                     output.add(node);
+                }
+
+
+                if (command.equals("useEnvironmentCard")) {
+                    int handIdx = action.getHandIdx();
+                    int affectedRow = action.getAffectedRow();
+
+                    String error = game.useEnvironmentCard(handIdx, affectedRow);
+
+                    if (error != null) {
+                        node.put("command", command);
+                        node.put("handIdx", handIdx);
+                        node.put("affectedRow", affectedRow);
+                        node.put("error", error);
+                        output.add(node);
+                    }
+                }
+
+                if (command.equals("getEnvironmentCardsInHand")) {
+                    int playerIdx = action.getPlayerIdx();
+
+                    ArrayList<Environment> envs = game.getEnvironmentCardsInHand(playerIdx);
+
+                    node.put("command", command);
+                    node.put("playerIdx", playerIdx);
+                    ArrayNode cardsNode = objectMapper.createArrayNode();
+
+                    for (Environment env : envs)
+                        cardsNode.add(env.createCardNode());
+
+                    node.set("output", cardsNode);
+                    output.add(node);
+                }
+
+                if (command.equals("getFrozenCardsOnTable")) {
+                    node.put("command", command);
+
+                    ArrayList<Minion> frozenCards = game.getFrozenCards();
+
+                    ArrayNode cardsNode = objectMapper.createArrayNode();
+
+                    for (Minion minion : frozenCards)
+                        cardsNode.add(minion.createCardNode());
+
+                    node.set("output", cardsNode);
+                    output.add(node);
+
+                }
+
+                if (command.equals("getCardAtPosition")) {
+                    int x = action.getX();
+                    int y = action.getY();
+
+                    Card card = game.getCardAtPosition(x, y);
+
+                    node.put("command", command);
+                    node.put("x", x);
+                    node.put("y", y);
+                    if (card != null) {
+                        node.set("output", card.createCardNode());
+                        output.add(node);
+                    }
+                    else {
+                        node.put("output", "No card available at that position.");
+                        output.add(node);
+                    }
+                }
+
+                if (command.equals("cardUsesAttack")) {
+                    int x1 = action.getCardAttacker().getX();
+                    int y1 = action.getCardAttacker().getY();
+                    int x2 = action.getCardAttacked().getX();
+                    int y2 = action.getCardAttacked().getY();
+
+                    String error = game.attackMinion(x1, y1, x2, y2);
+
+                    if (error != null) {
+                        node.put("command", command);
+
+                        ObjectNode attackerNode = objectMapper.createObjectNode();
+                        ObjectNode attackedNode = objectMapper.createObjectNode();
+
+                        attackerNode.put("x", x1);
+                        attackerNode.put("y", y1);
+                        node.set("cardAttacker", attackerNode);
+
+                        attackedNode.put("x", x2);
+                        attackedNode.put("y", y2);
+                        node.set("cardAttacked", attackedNode);
+
+                        node.put("error", error);
+
+                        output.add(node);
+                    }
+                }
+
+                if (command.equals("cardUsesAbility")) {
+                    int x1 = action.getCardAttacker().getX();
+                    int y1 = action.getCardAttacker().getY();
+                    int x2 = action.getCardAttacked().getX();
+                    int y2 = action.getCardAttacked().getY();
+
+                    String error = game.minionUseAbility(x1, y1, x2, y2);
+
+                    if (error != null) {
+                        node.put("command", command);
+
+                        ObjectNode attackerNode = objectMapper.createObjectNode();
+                        ObjectNode attackedNode = objectMapper.createObjectNode();
+
+                        attackerNode.put("x", x1);
+                        attackerNode.put("y", y1);
+                        node.set("cardAttacker", attackerNode);
+
+                        attackedNode.put("x", x2);
+                        attackedNode.put("y", y2);
+                        node.set("cardAttacked", attackedNode);
+
+                        node.put("error", error);
+
+                        output.add(node);
+                    }
+                }
+
+                if (command.equals("useAttackHero")) {
+                    int x = action.getCardAttacker().getX();
+                    int y = action.getCardAttacker().getY();
+
+                    String s = game.minionAttackHero(x, y);
+
+                    if (s != null) {
+
+                        if (s.equals("1")) {
+                            node.put("gameEnded", "Player one killed the enemy hero.");
+                            output.add(node);
+                            player1.setWins(player1.getWins() + 1);
+                        }
+
+                        else if (s.equals("2")) {
+                            node.put("gameEnded", "Player two killed the enemy hero.");
+                            output.add(node);
+                            player2.setWins(player2.getWins() + 1);
+                        }
+
+                        else {
+                            node.put("command", command);
+                            ObjectNode attackerNode = objectMapper.createObjectNode();
+                            attackerNode.put("x", x);
+                            attackerNode.put("y", y);
+                            node.set("cardAttacker", attackerNode);
+
+                            node.put("error", s);
+                            output.add(node);
+                        }
+                    }
                 }
             }
         }

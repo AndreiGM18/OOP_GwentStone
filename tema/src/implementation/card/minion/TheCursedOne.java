@@ -7,21 +7,14 @@ public class TheCursedOne extends Minion {
         super(mana, description, colors, health, attackDamage, name);
     }
 
-    protected void action(Minion minion) {
+    public void action(Minion minion) {
+        System.out.println("thecursedone");
         int hp = minion.getHealth();
-
-        this.health = this.health ^ hp;
-        hp = this.health ^ minion.health;
-        this.health = this.health ^ hp;
-
-        minion.setHealth(hp);
-
         int atk = minion.getAttackDamage();
 
-        this.attackDamage = this.attackDamage ^ atk;
-        atk = this.attackDamage ^ atk;
-        this.attackDamage = this.attackDamage ^ atk;
+        minion.setHealth(atk);
+        minion.setAttackDamage(hp);
 
-        minion.setAttackDamage(atk);
+        this.hasAttacked = true;
     }
 }

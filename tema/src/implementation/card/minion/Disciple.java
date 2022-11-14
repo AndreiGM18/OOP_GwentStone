@@ -7,7 +7,9 @@ public class Disciple extends Minion {
         super(mana, description, colors, health, attackDamage, name);
     }
 
-    protected void action(Minion minion) {
+    public void action(Minion minion) {
+        System.out.println("disciple");
         minion.setHealth(minion.getHealth() + 2);
+        this.hasAttacked = true;
     }
 }

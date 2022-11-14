@@ -22,10 +22,10 @@ public class Setup {
             decksData = inputData.getPlayerTwoDecks();
 
         ArrayList<ArrayList<Card>> decksPlayer = new ArrayList<>();
-        for (int i = 0; i < decksData.getNrDecks(); ++i) {
+        for (int i = 0; i < decksData.getNrDecks(); i++) {
             ArrayList<Card> deck = new ArrayList<>();
 
-            for (int j = 0; j < decksData.getNrCardsInDeck(); ++j) {
+            for (int j = 0; j < decksData.getNrCardsInDeck(); j++) {
                 Card card;
 
                 CardInput cardInput = decksData.getDecks().get(i).get(j);
@@ -55,7 +55,7 @@ public class Setup {
             decksPlayer.add(deck);
         }
 
-        return new Player(decksData.getNrDecks(), decksData.getNrCardsInDeck(), decksPlayer);
+        return new Player(decksData.getNrCardsInDeck(), decksData.getNrDecks(), decksPlayer);
     }
 
     public static Hero setupHero(CardInput heroInput) {

@@ -13,8 +13,6 @@ public abstract class Card {
     protected String description;
     protected ArrayList<String> colors;
     protected String name;
-    protected void action() {
-    }
 
     public Card(int mana, String description, ArrayList<String> colors, String name) {
         this.mana = mana;
@@ -98,5 +96,7 @@ public abstract class Card {
                 ", colors=" + colors +
                 ", name='" + name + '\'' +
                 '}';
+    }
+    public void action() {
     }
 }

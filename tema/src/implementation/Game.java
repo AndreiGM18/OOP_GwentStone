@@ -2,6 +2,9 @@ package implementation;
 
 import implementation.card.Card;
 import implementation.card.environment.Environment;
+import implementation.card.environment.Firestorm;
+import implementation.card.environment.HeartHound;
+import implementation.card.environment.Winterfell;
 import implementation.card.hero.Hero;
 import implementation.card.minion.*;
 
@@ -40,10 +43,46 @@ public class Game {
     }
 
     public void nextTurn() {
-        if (currPlayerIdx == 1)
+        if (currPlayerIdx == 1) {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    Minion card1 = table.get(3).get(i);
+                    card1.setFrozen(false);
+                    card1.setHasAttacked(false);
+                }
+                catch (Exception e) {
+                }
+
+                try {
+                    Minion card2 = table.get(2).get(i);
+                    card2.setFrozen(false);
+                    card2.setHasAttacked(false);
+                }
+                catch (Exception e) {
+                }
+            }
             currPlayerIdx = 2;
-        else
+        }
+        else {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    Minion card1 = table.get(1).get(i);
+                    card1.setFrozen(false);
+                    card1.setHasAttacked(false);
+                }
+                catch (Exception e) {
+                }
+
+                try {
+                    Minion card2 = table.get(0).get(i);
+                    card2.setFrozen(false);
+                    card2.setHasAttacked(false);
+                }
+                catch (Exception e) {
+                }
+            }
             currPlayerIdx = 1;
+        }
 
         nextRound = !nextRound;
 
@@ -110,10 +149,10 @@ public class Game {
         ArrayList<Card> shuffledDeck1 = new ArrayList<>(player1.getDeck(player1.getCurrDeckIdx()));
         ArrayList<Card> shuffledDeck2 = new ArrayList<>(player2.getDeck(player2.getCurrDeckIdx()));
 
-        for (int i = player1.getDeck(player1.getCurrDeckIdx()).size() -1; i >= 1; i--)
+        for (int i = player1.getDeck(player1.getCurrDeckIdx()).size() - 1; i >= 1; i--)
             Collections.swap(shuffledDeck1, i, r1.nextInt(i + 1));
 
-        for (int i = player2.getDeck(player2.getCurrDeckIdx()).size() -1; i >= 1; i--)
+        for (int i = player2.getDeck(player2.getCurrDeckIdx()).size() - 1; i >= 1; i--)
             Collections.swap(shuffledDeck2, i, r2.nextInt(i + 1));
 
         player1.setCurrDeck(shuffledDeck1);
@@ -173,10 +212,15 @@ public class Game {
     }
 
     public Card getCardAtPosition(int x, int y) {
-        if (table.get(x).get(y) != null)
-            return table.get(x).get(y);
-        else
+        Card card;
+
+        try {
+            card = table.get(x).get(y);
+            return card;
+        }
+        catch (Exception e) {
             return null;
+        }
     }
 
     public ArrayList<Environment> getEnvironmentCardsInHand(int playerIdx) {
@@ -190,9 +234,15 @@ public class Game {
         ArrayList<Minion> frozenCards = new ArrayList<>();
 
         for (int i = 0; i < 5; i++)
-            for (int j = 0; j < 5; ++j)
-                if (table.get(i).get(j).isFrozen())
-                    frozenCards.add(table.get(i).get(j));
+            for (int j = 0; j < 5; ++j) {
+                try {
+                    Minion minion = table.get(i).get(j);
+                    if (minion.isFrozen())
+                        frozenCards.add(minion);
+                }
+                catch (Exception e) {
+                }
+            }
 
         return frozenCards;
     }
@@ -214,6 +264,190 @@ public class Game {
             return this.getCurrPlayer().addMinionRows(this, frontRow, card);
         else
             return this.getCurrPlayer().addMinionRows(this, backRow, card);
+    }
+
+    public String useEnvironmentCard(int handIdx, int affectedRow) {
+        Player currPlayer = this.getCurrPlayer();
+        int currPlayerIdx = this.getCurrPlayerIdx();
+        Card card = currPlayer.getHand().get(handIdx);
+
+        if (card instanceof Environment) {
+            if (currPlayer.getMana() >= card.getMana()) {
+                if ((currPlayerIdx == 1 && (affectedRow == 0 || affectedRow == 1)) ||
+                        (currPlayerIdx == 2 && (affectedRow == 2 || affectedRow == 3))) {
+                    ArrayList<Minion> affectedRowArray = this.getTable().get(affectedRow);
+                    if (card instanceof HeartHound) {
+                        ArrayList<Minion> mirror = this.getTable().get(3 - affectedRow);
+                        if (mirror.size() == 5) {
+                            return "Cannot steal enemy card since the player's row is full.";
+                        }
+                        else {
+                            ((HeartHound) card).action(mirror, affectedRowArray);
+                            currPlayer.setMana(currPlayer.getMana() - card.getMana());
+                            currPlayer.getHand().remove(card);
+                            return null;
+                        }
+                    } else {
+                        if (card instanceof Firestorm) {
+                            ((Firestorm) card).action(affectedRowArray);
+                        }
+                        if (card instanceof Winterfell) {
+                            ((Winterfell) card).action((affectedRowArray));
+                        }
+
+                        currPlayer.setMana(currPlayer.getMana() - card.getMana());
+                        currPlayer.getHand().remove(card);
+                        return null;
+                    }
+                }
+                else {
+                    return "Chosen row does not belong to the enemy.";
+                }
+            }
+            else {
+                return "Not enough mana to use environment card.";
+            }
+        }
+        else {
+            return "Chosen card is not of type environment.";
+        }
+    }
+
+    public String attackMinion(int x1, int y1, int x2, int y2) {
+        Minion cardAttacker, cardAttacked;
+
+        if ((currPlayerIdx == 1 && (x2 == 3 || x2 == 2)) || (currPlayerIdx == 2 && (x2 == 1 || x2 == 0)))
+            return "Attacked card does not belong to the enemy.";
+
+        try {
+            cardAttacker = table.get(x1).get(y1);
+            cardAttacked = table.get(x2).get(y2);
+        }
+        catch (Exception e) {
+            return null;
+        }
+
+        if (cardAttacker.hasAttacked())
+            return "Attacker card has already attacked this turn.";
+
+        if (cardAttacker.isFrozen())
+            return "Attacker card is frozen.";
+
+        if (!(cardAttacked instanceof Tank)) {
+            if (currPlayerIdx == 1) {
+                for (Minion minion : table.get(1))
+                    if (minion instanceof Tank) {
+                        return "Attacked card is not of type 'Tank'.";
+                    }
+            } else {
+                for (Minion minion : table.get(2))
+                    if (minion instanceof Tank) {
+                        return "Attacked card is not of type 'Tank'.";
+                    }
+            }
+        }
+
+        cardAttacker.attackMinion(cardAttacked);
+
+        if (cardAttacked.getHealth() == 0)
+            table.get(x2).remove(cardAttacked);
+
+        return null;
+    }
+
+    public String minionUseAbility(int x1, int y1, int x2, int y2) {
+        Minion cardAttacker, cardAttacked;
+
+        try {
+            cardAttacker = table.get(x1).get(y1);
+            cardAttacked = table.get(x2).get(y2);
+        }
+        catch (Exception e) {
+            return null;
+        }
+
+        if (cardAttacker.isFrozen())
+            return "Attacker card is frozen.";
+
+        if (cardAttacker.hasAttacked())
+            return "Attacker card has already attacked this turn.";
+
+        if (cardAttacker instanceof Disciple) {
+            if ((currPlayerIdx == 1 && (x2 == 1 || x2 == 0)) || (currPlayerIdx == 2 && (x2 == 3 || x2 == 2)))
+            return "Attacked card does not belong to the current player.";
+        } else if (cardAttacker instanceof TheRipper || cardAttacker instanceof Miraj ||
+                    cardAttacker instanceof TheCursedOne) {
+            if ((currPlayerIdx == 1 && (x2 == 3 || x2 == 2)) || (currPlayerIdx == 2 && (x2 == 1 || x2 == 0)))
+                return "Attacked card does not belong to the enemy.";
+
+            if (!(cardAttacked instanceof Tank)) {
+                if (currPlayerIdx == 1) {
+                    for (Minion minion : table.get(1))
+                        if (minion instanceof Tank) {
+                            return "Attacked card is not of type 'Tank'.";
+                        }
+                } else {
+                    for (Minion minion : table.get(2))
+                        if (minion instanceof Tank) {
+                            return "Attacked card is not of type 'Tank'.";
+                        }
+                }
+            }
+        }
+
+        System.out.println(cardAttacker.createCardNode());
+        System.out.println(cardAttacked.createCardNode());
+
+        if (cardAttacker instanceof Miraj)
+            ((Miraj)cardAttacker).action(cardAttacked);
+        if (cardAttacker instanceof TheRipper)
+            ((TheRipper)cardAttacker).action(cardAttacked);
+        if (cardAttacker instanceof TheCursedOne)
+            ((TheCursedOne)cardAttacker).action(cardAttacked);
+        if (cardAttacker instanceof Disciple)
+            ((Disciple)cardAttacker).action(cardAttacked);
+
+        if (cardAttacked.getHealth() == 0)
+            table.get(x2).remove(cardAttacked);
+
+        return null;
+    }
+
+    public String minionAttackHero(int x, int y) {
+        Minion cardAttacker;
+
+        try {
+            cardAttacker = table.get(x).get(y);
+        }
+        catch (Exception e){
+            return null;
+        }
+
+        if (cardAttacker.isFrozen())
+            return "Attacker card is frozen.";
+
+        if (cardAttacker.hasAttacked())
+            return "Attacker card has already attacked this turn.";
+
+        if (currPlayerIdx == 1) {
+            for (Minion minion : table.get(1))
+                if (minion instanceof Tank) {
+                    return "Attacked card is not of type 'Tank'.";
+                }
+        } else {
+            for (Minion minion : table.get(2))
+                if (minion instanceof Tank) {
+                    return "Attacked card is not of type 'Tank'.";
+                }
+        }
+
+        Hero hero = this.getPlayerHero(3 - currPlayerIdx);
+        cardAttacker.attackHero(hero);
+
+        if (hero.getHealth() == 0)
+            return Integer.toString(currPlayerIdx);
+
+        return null;
     }
 
 }

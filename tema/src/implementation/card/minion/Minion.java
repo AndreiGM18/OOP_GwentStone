@@ -9,6 +9,7 @@ public class Minion extends Card {
     protected int health;
     protected int attackDamage;
     protected boolean frozen;
+    protected boolean hasAttacked = false;
 
     public Minion(int mana, String description, ArrayList<String> colors, int health, int attackDamage, String name) {
         super(mana, description, colors, name);
@@ -48,12 +49,25 @@ public class Minion extends Card {
         this.frozen = frozen;
     }
 
-    protected void attackMinion(Minion minion) {
+    public void attackMinion(Minion minion) {
         minion.setHealth(minion.getHealth() - this.attackDamage);
+        this.hasAttacked = true;
     }
 
-    protected void attackHero(Hero hero) {
+    public void attackHero(Hero hero) {
         hero.setHealth(hero.getHealth() - this.attackDamage);
+        this.hasAttacked = true;
+    }
+
+    public boolean hasAttacked() {
+        return hasAttacked;
+    }
+
+    public void setHasAttacked(boolean hasAttacked) {
+        this.hasAttacked = hasAttacked;
+    }
+
+    public void action(Card card) {
     }
 }
 

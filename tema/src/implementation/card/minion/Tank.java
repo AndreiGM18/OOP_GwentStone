@@ -7,6 +7,6 @@ public class Tank extends Minion {
         super(mana, description, colors, health, attackDamage, name);
     }
 
-    protected void action (Minion minion) {
+    public void action (Minion minion) {
     }
 }

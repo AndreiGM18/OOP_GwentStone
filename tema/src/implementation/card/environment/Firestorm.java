@@ -10,8 +10,11 @@ public class Firestorm extends Environment {
         super(mana, description, colors, name);
     }
 
-    protected void action(ArrayList<Minion> minions) {
-        for (Minion minion : minions)
+    public void action(ArrayList<Minion> minions) {
+        for (Minion minion : minions) {
             minion.setHealth(minion.getHealth() - 1);
+            if (minion.getHealth() == 0)
+                minions.remove(minion);
+        }
     }
 }

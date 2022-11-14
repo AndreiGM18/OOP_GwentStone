@@ -1,6 +1,7 @@
 package implementation.card.environment;
 
 import implementation.card.Card;
+import implementation.card.minion.Minion;
 
 import java.util.ArrayList;
 
