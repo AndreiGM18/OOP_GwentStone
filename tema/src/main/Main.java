@@ -1,18 +1,24 @@
 package main;
 
 import checker.Checker;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import fileio.ActionsInput;
+import implementation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
+import implementation.card.Card;
+import setup.Setup;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -70,7 +76,79 @@ public final class Main {
         ArrayNode output = objectMapper.createArrayNode();
 
         //TODO add here the entry point to your implementation
+        Player player1 = Setup.setupPlayer(inputData, 1);
+        Player player2 = Setup.setupPlayer(inputData, 2);
 
+        for (int i = 0; i < inputData.getGames().size(); ++i) {
+            Game game = new Game(player1, player2);
+            Setup.setupGame(inputData, i, game);
+
+            ArrayList<ActionsInput> actionsInput = inputData.getGames().get(i).getActions();
+
+            for (int j = 0; j < actionsInput.size(); ++j) {
+
+                ActionsInput action = actionsInput.get(j);
+                String command = action.getCommand();
+
+                ObjectNode node = objectMapper.createObjectNode();
+                node.put("command", command);
+
+                if (command.equals("getPlayerDeck")) {
+                    int playerIdx = action.getPlayerIdx();
+
+                    node.put("playerIdx", playerIdx);
+
+                    ArrayList<Card> cards = game.getPlayerbyIdx(playerIdx).getCurrDeck();
+
+                    ArrayNode cardsNode = objectMapper.createArrayNode();
+                    for (int k = 0; k < cards.size(); k++) {
+                        //System.out.println(cards.get(k).toString());
+                        cardsNode.add(cards.get(k).createCardNode());
+                    }
+
+                    node.set("output", cardsNode);
+                    output.add(node);
+                }
+
+                if (command.equals("getPlayerHero")) {
+                    int playerIdx = action.getPlayerIdx();
+                    node.put("playerIdx", playerIdx);
+
+                    ObjectNode heroNode = objectMapper.createObjectNode();
+                    heroNode = game.getPlayerbyIdx(playerIdx).getHero().createCardNode();
+
+                    node.set("output", heroNode);
+                    output.add(node);
+                }
+
+                if (command.equals("getPlayerTurn")) {
+                    node.put("output", game.getCurrPlayerIdx());
+                    output.add(node);
+                }
+
+//                if (command.equals("placeCard")) {
+//                    Card card = game.getCurrPlayer().getHand().get(action.getHandIdx());
+//
+//                    if (card instanceof Environment)
+//
+//                    int frontRow, backRow;
+//                    if (game.getCurrPlayerIdx() == 1) {
+//                        frontRow = 2;
+//                        backRow = 3;
+//                    } else {
+//                        frontRow = 1;
+//                        backRow = 0;
+//                    }
+//
+//                    if (card instanceof TheRipper || card instanceof Miraj || card instanceof Tank)
+//                        game.getTable().get(frontRow).add((Minion) card);
+//                    else
+//                        game.getTable().get(backRow).add((Minion) card);
+//
+//                    return "";
+//                }
+            }
+        }
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);
     }

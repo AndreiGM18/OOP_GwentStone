@@ -133,6 +133,10 @@ public final class Checker {
         try {
             JsonNode output = mapper.readTree(new File(CheckerConstants.OUT_PATH + file));
             JsonNode ref = mapper.readTree(new File(CheckerConstants.REF_PATH + file));
+//            System.out.println("output este");
+//            System.out.println(output);
+//            System.out.println("ref este");
+//            System.out.println(ref);
             return output.equals(ref);
 
         } catch (IOException e) {

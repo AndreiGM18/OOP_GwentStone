@@ -1,40 +1,42 @@
 package implementation;
 
+import implementation.card.Card;
+import implementation.card.environment.Environment;
+import implementation.card.hero.Hero;
+import implementation.card.minion.Minion;
+
 import java.util.ArrayList;
 
-class Deck {
-    private ArrayList<Card> cards;
-
-    public Deck(ArrayList<Card> cards) {
-        this.cards = cards;
-    }
-
-    public ArrayList<Card> getCards() {
-        return cards;
-    }
-
-    public void setCards(ArrayList<Card> cards) {
-        this.cards = cards;
-    }
-}
-
-class Player {
+public class Player {
     private int mana;
     private int nrCardsInDeck;
     private int nrDecks;
-    private ArrayList<Deck> decks;
-    private Deck currDeck;
+    private ArrayList<ArrayList<Card>> decks;
+    private ArrayList<Card> currDeck;
     private int currDeckIdx;
     private Hero hero;
-    private Deck hand;
-    private int chosenDeckIdx;
+    private ArrayList<Card> hand;
     private int wins;
 
-    public Player(int nrCardsInDeck, int nrDecks, ArrayList<Deck> decks) {
+    public Player(int nrCardsInDeck, int nrDecks, ArrayList<ArrayList<Card>> decks) {
         this.nrCardsInDeck = nrCardsInDeck;
         this.nrDecks = nrDecks;
         this.decks = decks;
         this.mana = 1;
+        this.hand = new ArrayList<>();
+        this.currDeck = new ArrayList<>();
+    }
+
+    public Player(Player player) {
+        this.mana = player.mana;
+        this.nrCardsInDeck = player.nrCardsInDeck;
+        this.nrDecks = player.nrDecks;
+        this.decks = player.decks;
+        this.currDeck = player.currDeck;
+        this.currDeckIdx = player.currDeckIdx;
+        this.hero = player.hero;
+        this.hand = player.hand;
+        this.wins = player.wins;
     }
 
     public int getNrCardsInDeck() {
@@ -53,11 +55,11 @@ class Player {
         this.nrDecks = nrDecks;
     }
 
-    public ArrayList<Deck> getDecks() {
+    public ArrayList<ArrayList<Card>> getDecks() {
         return decks;
     }
 
-    public void setDecks(ArrayList<Deck> decks) {
+    public void setDecks(ArrayList<ArrayList<Card>> decks) {
         this.decks = decks;
     }
 
@@ -77,19 +79,11 @@ class Player {
         this.mana = mana;
     }
 
-    public int getChosenDeckIdx() {
-        return chosenDeckIdx;
-    }
-
-    public void setChosenDeckIdx(int chosenDeckIdx) {
-        this.chosenDeckIdx = chosenDeckIdx;
-    }
-
-    public Deck getCurrDeck() {
+    public ArrayList<Card> getCurrDeck() {
         return currDeck;
     }
 
-    public void setCurrDeck(Deck currDeck) {
+    public void setCurrDeck(ArrayList<Card> currDeck) {
         this.currDeck = currDeck;
     }
 
@@ -109,7 +103,7 @@ class Player {
         this.wins = wins;
     }
 
-    private void addMinionRows(ArrayList<Minion> row, Card card) {
+    public void addMinionRows(ArrayList<Minion> row, Card card) {
         if (card instanceof Environment)
             System.out.println("Cannot place environment card on table.");
         else {
@@ -126,17 +120,26 @@ class Player {
         }
     }
 
-    private void addCardHand(Deck hand, Deck currDeck) {
-        hand.getCards().add(currDeck.getCards().remove(0));
+    public void addCardHand() {
+        this.hand.add(currDeck.remove(0));
     }
 
     public ArrayList<Environment> getEnvironmentCards() {
-        ArrayList<Environment> envs = new ArrayList<Environment>();
+        ArrayList<Environment> envs = new ArrayList<>();
 
-        for (Card card : hand.getCards())
+        for (Card card : hand)
             if (card instanceof Environment)
                 envs.add((Environment) card);
 
         return envs;
     }
+
+    public ArrayList<Card> getHand() {
+        return hand;
+    }
+
+    public ArrayList<Card> getDeck(int idx) {
+        return this.getDecks().get(idx);
+    }
+
 }

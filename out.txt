@@ -1,0 +1,7 @@
+[ {
+  "command" : "getPlayerDeck",
+  "playerIdx" : 2
+}, {
+  "command" : "getPlayerDeck",
+  "playerIdx" : 1
+} ]
