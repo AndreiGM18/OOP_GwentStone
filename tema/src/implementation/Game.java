@@ -292,6 +292,14 @@ public class Game {
                     } else {
                         if (card instanceof Firestorm) {
                             ((Firestorm) card).action(affectedRowArray);
+                            int i = 0;
+                            while (i < affectedRowArray.size()) {
+                                if (affectedRowArray.get(i).getHealth() == 0) {
+                                    affectedRowArray.remove(i);
+                                    i--;
+                                }
+                                i++;
+                            }
                         }
                         if (card instanceof Winterfell) {
                             ((Winterfell) card).action((affectedRowArray));

@@ -6,7 +6,4 @@ public class Tank extends Minion {
     public Tank(int mana, String description, ArrayList<String> colors, int health, int attackDamage, String name) {
         super(mana, description, colors, health, attackDamage, name);
     }
-
-    public void action (Minion minion) {
-    }
 }

@@ -97,13 +97,6 @@
     "description" : "Premium card: His presence is not known even by ghosts, success at all costs.",
     "colors" : [ "Black", "White" ],
     "name" : "Sentinel"
-  }, {
-    "mana" : 1,
-    "attackDamage" : 2,
-    "health" : 1,
-    "description" : "Premium card: Fear him. Your last breath is now.",
-    "colors" : [ "Red", "Blue", "Pink" ],
-    "name" : "Berserker"
   } ] ]
 }, {
   "command" : "getCardsInHand",
