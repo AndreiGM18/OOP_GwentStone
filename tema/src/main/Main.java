@@ -83,7 +83,11 @@ public final class Main {
         Player player1 = Setup.setupPlayer(inputData, 1);
         Player player2 = Setup.setupPlayer(inputData, 2);
 
-        for (int i = 0; i < inputData.getGames().size(); ++i) {
+        for (int i = 0; i < inputData.getGames().size(); i++) {
+            player1.setHand(new ArrayList<>());
+            player2.setHand(new ArrayList<>());
+            System.out.println(player1.getHand());
+            System.out.println(player2.getHand());
             Game game = new Game(player1, player2);
             Setup.setupGame(inputData, i, game);
 
@@ -145,6 +149,7 @@ public final class Main {
                         node.put("command", command);
                         node.put("handIdx", handIdx);
                         node.put("error", error);
+
                         output.add(node);
                     }
                 }
@@ -363,6 +368,27 @@ public final class Main {
 
                         output.add(node);
                     }
+                }
+
+                if (command.equals("getPlayerOneWins")) {
+                    node.put("command", command);
+                    node.put("output", player1.getWins());
+
+                    output.add(node);
+                }
+
+                if (command.equals("getPlayerTwoWins")) {
+                    node.put("command", command);
+                    node.put("output", player2.getWins());
+
+                    output.add(node);
+                }
+
+                if (command.equals("getTotalGamesPlayed")) {
+                    node.put("command", command);
+                    node.put("output", i + 1);
+
+                    output.add(node);
                 }
             }
         }
