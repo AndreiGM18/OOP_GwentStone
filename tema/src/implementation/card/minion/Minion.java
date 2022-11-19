@@ -11,69 +11,101 @@ public class Minion extends Card {
     protected boolean frozen;
     protected boolean hasAttacked = false;
 
-    public Minion(int mana, String description, ArrayList<String> colors, int health, int attackDamage, String name) {
+    public Minion(final int mana, final String description, final ArrayList<String> colors,
+                  final int health, final int attackDamage, final String name) {
         super(mana, description, colors, name);
         this.health = health;
         this.attackDamage = attackDamage;
     }
 
-    public Minion(Minion minion) {
+    public Minion(final Minion minion) {
         super(minion.mana, minion.description, minion.colors, minion.name);
         this.health = minion.health;
         this.attackDamage = minion.attackDamage;
+        this.frozen = minion.frozen;
+        this.hasAttacked = minion.hasAttacked;
     }
 
+    /**
+     *
+     * @return health
+     */
     public int getHealth() {
         return health;
     }
 
-    public void setHealth(int health) {
+    /**
+     * Sets the new health
+     * @param health new health
+     */
+    public void setHealth(final int health) {
         this.health = health;
     }
 
+    /**
+     *
+     * @return attackDamage
+     */
     public int getAttackDamage() {
         return attackDamage;
     }
 
-    public void setAttackDamage(int attackDamage) {
+    /**
+     * Sets the new attackDamage
+     * @param attackDamage new attackDamage
+     */
+    public void setAttackDamage(final int attackDamage) {
         this.attackDamage = attackDamage;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    /**
+     *
+     * @return whether the minion is frozen or not
+     */
     public boolean isFrozen() {
         return frozen;
     }
 
-    public void setFrozen(boolean frozen) {
+    /**
+     * Sets the frozen status
+     * @param frozen new frozen status
+     */
+    public void setFrozen(final boolean frozen) {
         this.frozen = frozen;
     }
 
-    public void attackMinion(Minion minion) {
+    /**
+     * Attacks a given minion
+     * @param minion the given minion
+     */
+    public void attackMinion(final Minion minion) {
         minion.setHealth(Math.max(minion.getHealth() - this.attackDamage, 0));
         this.hasAttacked = true;
     }
 
-    public void attackHero(Hero hero) {
+    /**
+     * Attacks a given hero
+     * @param hero the given hero
+     */
+    public void attackHero(final Hero hero) {
         hero.setHealth(Math.max(hero.getHealth() - this.attackDamage, 0));
         this.hasAttacked = true;
     }
 
+    /**
+     *
+     * @return whether the minion has attacked or not
+     */
     public boolean hasAttacked() {
         return hasAttacked;
     }
 
-    public void setHasAttacked(boolean hasAttacked) {
+    /**
+     * Sets whether the minion has attacked or not
+     * @param hasAttacked whether the minion has attacked or not
+     */
+    public void setHasAttacked(final boolean hasAttacked) {
         this.hasAttacked = hasAttacked;
-    }
-
-    public void action(Card card) {
     }
 }
 

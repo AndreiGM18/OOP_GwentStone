@@ -1,12 +1,26 @@
 package implementation;
 
+import constants.Constants;
+
 import implementation.card.Card;
+
 import implementation.card.environment.Environment;
 import implementation.card.environment.Firestorm;
 import implementation.card.environment.HeartHound;
 import implementation.card.environment.Winterfell;
-import implementation.card.hero.*;
-import implementation.card.minion.*;
+
+import implementation.card.hero.Hero;
+import implementation.card.hero.EmpressThorina;
+import implementation.card.hero.GeneralKocioraw;
+import implementation.card.hero.KingMudface;
+import implementation.card.hero.LordRoyce;
+
+import implementation.card.minion.Minion;
+import implementation.card.minion.Disciple;
+import implementation.card.minion.Miraj;
+import implementation.card.minion.Tank;
+import implementation.card.minion.TheCursedOne;
+import implementation.card.minion.TheRipper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,14 +32,14 @@ public class Game {
     private long shuffleSeed;
     private int currPlayerIdx;
     private int startingPlayer;
-    private ArrayList<ArrayList<Minion>> table;
+    private final ArrayList<ArrayList<Minion>> table;
 
     private int roundCount = 1;
     private boolean nextRound = true;
 
-    public Game(Player player1, Player player2) {
+    public Game(final Player player1, final Player player2) {
         table = new ArrayList<>();
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < Constants.Integers.NUMBER_OF_ROWS; ++i) {
             ArrayList<Minion> row = new ArrayList<>();
             table.add(row);
         }
@@ -34,6 +48,9 @@ public class Game {
         this.player2 = new Player(player2);
     }
 
+    /**
+     *
+     */
     public void nextRound() {
         ++roundCount;
 
@@ -42,108 +59,140 @@ public class Game {
         addMana();
     }
 
+    /**
+     *
+     */
     public void nextTurn() {
         this.getCurrPlayer().getHero().setHasAttacked(false);
 
         if (currPlayerIdx == 1) {
-            for (int i = 0; i < 5; i++) {
-                try {
-                    Minion card1 = table.get(3).get(i);
-                    card1.setFrozen(false);
-                    card1.setHasAttacked(false);
-                }
-                catch (Exception e) {
-                }
-
-                try {
-                    Minion card2 = table.get(2).get(i);
-                    card2.setFrozen(false);
-                    card2.setHasAttacked(false);
-                }
-                catch (Exception e) {
-                }
+            for (int i = 0; i < table.get(Constants.Integers.PLAYER_ONE_BACK_ROW).size(); i++) {
+                Minion card1 = table.get(Constants.Integers.PLAYER_ONE_BACK_ROW).get(i);
+                card1.setFrozen(false);
+                card1.setHasAttacked(false);
             }
+
+            for (int j = 0; j < table.get(Constants.Integers.PLAYER_ONE_FRONT_ROW).size(); j++) {
+                Minion card2 = table.get(Constants.Integers.PLAYER_ONE_FRONT_ROW).get(j);
+                card2.setFrozen(false);
+                card2.setHasAttacked(false);
+            }
+
             currPlayerIdx = 2;
-        }
-        else {
-            for (int i = 0; i < 5; i++) {
-                try {
-                    Minion card1 = table.get(1).get(i);
-                    card1.setFrozen(false);
-                    card1.setHasAttacked(false);
-                }
-                catch (Exception e) {
-                }
-
-                try {
-                    Minion card2 = table.get(0).get(i);
-                    card2.setFrozen(false);
-                    card2.setHasAttacked(false);
-                }
-                catch (Exception e) {
-                }
+        } else {
+            for (int i = 0; i < table.get(Constants.Integers.PLAYER_TWO_FRONT_ROW).size(); i++) {
+                Minion card1 = table.get(Constants.Integers.PLAYER_TWO_FRONT_ROW).get(i);
+                card1.setFrozen(false);
+                card1.setHasAttacked(false);
             }
+
+            for (int j = 0; j < table.get(Constants.Integers.PLAYER_TWO_BACK_ROW).size(); j++) {
+                Minion card2 = table.get(Constants.Integers.PLAYER_TWO_BACK_ROW).get(j);
+                card2.setFrozen(false);
+                card2.setHasAttacked(false);
+            }
+
             currPlayerIdx = 1;
         }
 
         nextRound = !nextRound;
 
-        if (nextRound)
+        if (nextRound) {
             nextRound();
+        }
     }
 
+    /**
+     *
+     * @return
+     */
     public Player getPlayer1() {
         return player1;
     }
 
+    /**
+     *
+     * @return
+     */
     public Player getPlayer2() {
         return player2;
     }
 
+    /**
+     *
+     * @return
+     */
     public Player getCurrPlayer() {
-        if (currPlayerIdx == 1)
+        if (currPlayerIdx == 1) {
             return player1;
-        else
+        } else {
             return player2;
+        }
     }
 
+
+    /**
+     *
+     * @return
+     */
     public ArrayList<ArrayList<Minion>> getTable() {
         return table;
     }
 
-
-    public ArrayList<Minion> getRow(int idx) {
-        return this.getTable().get(idx);
-    }
-
+    /**
+     *
+     * @return
+     */
     public long getShuffleSeed() {
         return shuffleSeed;
     }
 
-    public void setShuffleSeed(long shuffleSeed) {
+    /**
+     *
+     * @param shuffleSeed
+     */
+    public void setShuffleSeed(final long shuffleSeed) {
         this.shuffleSeed = shuffleSeed;
     }
 
-
-    public void setup(int playerOneDeckIdx, int playerTwoDeckIdx,
-                      long shuffleSeed, Hero playerOneHero, Hero playerTwoHero, int startingPlayer) {
-        this.setShuffleSeed(shuffleSeed);
+    /**
+     *
+     * @param playerOneDeckIdx
+     * @param playerTwoDeckIdx
+     * @param shuffleSeedGiven
+     * @param playerOneHero
+     * @param playerTwoHero
+     * @param startingPlayerGiven
+     */
+    public void setup(final int playerOneDeckIdx, final int playerTwoDeckIdx,
+                      final long shuffleSeedGiven, final Hero playerOneHero,
+                      final Hero playerTwoHero, final int startingPlayerGiven) {
+        this.shuffleSeed = shuffleSeedGiven;
         this.setPlayerHero(this.player1, playerOneHero);
         this.setPlayerHero(this.player2, playerTwoHero);
-        this.setStartingPlayer(startingPlayer);
-        this.setCurrPlayerIdx(startingPlayer);
+        this.startingPlayer = startingPlayerGiven;
+        this.currPlayerIdx = startingPlayerGiven;
         this.setDeckPlayer(this.player1, playerOneDeckIdx);
         this.setDeckPlayer(this.player2, playerTwoDeckIdx);
         this.setShuffledDecks();
     }
 
-    public Player getPlayerbyIdx(int idx) {
-        if (idx == 1)
+    /**
+     *
+     * @param idx
+     * @return
+     */
+    public Player getPlayerByIdx(final int idx) {
+        if (idx == 1) {
             return player1;
-        else
+        } else {
             return player2;
+        }
     }
 
+    /**
+     *
+     */
     public void setShuffledDecks() {
         Random r1 = new Random(shuffleSeed);
         Random r2 = new Random(shuffleSeed);
@@ -151,147 +200,217 @@ public class Game {
         ArrayList<Card> shuffledDeck1 = new ArrayList<>(player1.getDeck(player1.getCurrDeckIdx()));
         ArrayList<Card> shuffledDeck2 = new ArrayList<>(player2.getDeck(player2.getCurrDeckIdx()));
 
-        for (int i = player1.getDeck(player1.getCurrDeckIdx()).size() - 1; i >= 1; i--)
+        for (int i = player1.getDeck(player1.getCurrDeckIdx()).size() - 1; i >= 1; i--) {
             Collections.swap(shuffledDeck1, i, r1.nextInt(i + 1));
+        }
 
-        for (int i = player2.getDeck(player2.getCurrDeckIdx()).size() - 1; i >= 1; i--)
+        for (int i = player2.getDeck(player2.getCurrDeckIdx()).size() - 1; i >= 1; i--) {
             Collections.swap(shuffledDeck2, i, r2.nextInt(i + 1));
+        }
 
         player1.setCurrDeck(shuffledDeck1);
         player2.setCurrDeck(shuffledDeck2);
     }
 
+    /**
+     *
+     */
     public void addMana() {
-        int addedMana = Math.min(roundCount, 10);
+        int addedMana = Math.min(roundCount, Constants.Integers.MAX_MANA_INCREASE);
 
         this.player1.setMana(this.player1.getMana() + addedMana);
         this.player2.setMana(this.player2.getMana() + addedMana);
     }
 
-    public void setDeckPlayer(Player player, int idx) {
+    /**
+     *
+     * @param player
+     * @param idx
+     */
+    public void setDeckPlayer(final Player player, final int idx) {
         player.setCurrDeckIdx(idx);
     }
 
-    public void setPlayerHero(Player player, Hero hero) {
+    /**
+     *
+     * @param player
+     * @param hero
+     */
+    public void setPlayerHero(final Player player, final Hero hero) {
         player.setHero(hero);
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCurrPlayerIdx() {
         return currPlayerIdx;
     }
 
-    public void setCurrPlayerIdx(int currPlayerIdx) {
+    /**
+     *
+     * @param currPlayerIdx
+     */
+    public void setCurrPlayerIdx(final int currPlayerIdx) {
         this.currPlayerIdx = currPlayerIdx;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getStartingPlayer() {
         return startingPlayer;
     }
 
-    public void setStartingPlayer(int startingPlayer) {
+    /**
+     *
+     * @param startingPlayer
+     */
+    public void setStartingPlayer(final int startingPlayer) {
         this.startingPlayer = startingPlayer;
     }
 
-    public Hero getPlayerHero(int playerIdx) {
-        if (playerIdx == 1)
+    /**
+     *
+     * @param playerIdx
+     * @return
+     */
+    public Hero getPlayerHero(final int playerIdx) {
+        if (playerIdx == 1) {
             return player1.getHero();
-        else
+        } else {
             return player2.getHero();
+        }
     }
 
-    public int getPlayerMana(int playerIdx) {
-        if (playerIdx == 1)
+    /**
+     *
+     * @param playerIdx
+     * @return
+     */
+    public int getPlayerMana(final int playerIdx) {
+        if (playerIdx == 1) {
             return player1.getMana();
-        else
+        } else {
             return player2.getMana();
+        }
     }
 
-    public int getPlayerWins(int playerIdx) {
-        if (playerIdx == 1)
-            return player1.getWins();
-        else
-            return player2.getWins();
-    }
-
-    public Card getCardAtPosition(int x, int y) {
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    public Card getCardAtPosition(final int x, final int y) {
         Card card;
 
         try {
             card = table.get(x).get(y);
             return card;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public ArrayList<Environment> getEnvironmentCardsInHand(int playerIdx) {
-        if (playerIdx == 1)
+    /**
+     *
+     * @param playerIdx
+     * @return
+     */
+    public ArrayList<Environment> getEnvironmentCardsInHand(final int playerIdx) {
+        if (playerIdx == 1) {
             return player1.getEnvironmentCards();
-        else
+        } else {
             return player2.getEnvironmentCards();
+        }
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<Minion> getFrozenCards() {
         ArrayList<Minion> frozenCards = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++)
-            for (int j = 0; j < 5; ++j) {
-                try {
-                    Minion minion = table.get(i).get(j);
-                    if (minion.isFrozen())
-                        frozenCards.add(minion);
-                }
-                catch (Exception e) {
+        for (int i = 0; i < Constants.Integers.NUMBER_OF_ROWS; i++) {
+            for (int j = 0; j < table.get(i).size(); ++j) {
+                Minion minion = table.get(i).get(j);
+                if (minion.isFrozen()) {
+                    frozenCards.add(minion);
                 }
             }
+        }
 
         return frozenCards;
     }
 
-    public String placeCard(int cardIdx) {
+    /**
+     *
+     * @param cardIdx
+     * @return
+     */
+    public String placeCard(final int cardIdx) {
         Card card = this.getCurrPlayer().getHand().get(cardIdx);
 
         int frontRow, backRow;
 
         if (this.getCurrPlayerIdx() == 1) {
-            frontRow = 2;
-            backRow = 3;
+            frontRow = Constants.Integers.PLAYER_ONE_FRONT_ROW;
+            backRow = Constants.Integers.PLAYER_ONE_BACK_ROW;
         } else {
-            frontRow = 1;
-            backRow = 0;
+            frontRow = Constants.Integers.PLAYER_TWO_FRONT_ROW;
+            backRow = Constants.Integers.PLAYER_TWO_BACK_ROW;
         }
 
-        if (card instanceof TheRipper || card instanceof Miraj || card instanceof Tank)
+        if (card instanceof TheRipper || card instanceof Miraj || card instanceof Tank) {
             return this.getCurrPlayer().addMinionRows(this, frontRow, card);
-        else
+        } else {
             return this.getCurrPlayer().addMinionRows(this, backRow, card);
+        }
     }
 
-    public String useEnvironmentCard(int handIdx, int affectedRow) {
+    /**
+     *
+     * @param handIdx
+     * @param affectedRow
+     * @return
+     */
+    public String useEnvironmentCard(final int handIdx, final int affectedRow) {
         Player currPlayer = this.getCurrPlayer();
-        int currPlayerIdx = this.getCurrPlayerIdx();
         Card card = currPlayer.getHand().get(handIdx);
 
         if (card instanceof Environment) {
             if (currPlayer.getMana() >= card.getMana()) {
-                if ((currPlayerIdx == 1 && (affectedRow == 0 || affectedRow == 1)) ||
-                        (currPlayerIdx == 2 && (affectedRow == 2 || affectedRow == 3))) {
+                if ((currPlayerIdx == 1
+                    && (affectedRow == Constants.Integers.PLAYER_TWO_FRONT_ROW
+                    || affectedRow == Constants.Integers.PLAYER_TWO_BACK_ROW))
+                    || (currPlayerIdx == 2
+                    && (affectedRow == Constants.Integers.PLAYER_ONE_FRONT_ROW
+                    || affectedRow == Constants.Integers.PLAYER_ONE_BACK_ROW))) {
                     ArrayList<Minion> affectedRowArray = this.getTable().get(affectedRow);
+
                     if (card instanceof HeartHound) {
-                        ArrayList<Minion> mirror = this.getTable().get(3 - affectedRow);
-                        if (mirror.size() == 5) {
-                            return "Cannot steal enemy card since the player's row is full.";
-                        }
-                        else {
+                        ArrayList<Minion> mirror =
+                                this.getTable().get(Constants.Integers.MIRROR - affectedRow);
+
+                        if (mirror.size() == Constants.Integers.MAX_CARDS) {
+                            return Constants.Error.ROW_FULL;
+                        } else {
                             ((HeartHound) card).action(mirror, affectedRowArray);
+
                             currPlayer.setMana(currPlayer.getMana() - card.getMana());
+
                             currPlayer.getHand().remove(card);
+
                             return null;
                         }
                     } else {
                         if (card instanceof Firestorm) {
                             ((Firestorm) card).action(affectedRowArray);
+
                             int i = 0;
                             while (i < affectedRowArray.size()) {
                                 if (affectedRowArray.get(i).getHealth() == 0) {
@@ -307,192 +426,237 @@ public class Game {
 
                         currPlayer.setMana(currPlayer.getMana() - card.getMana());
                         currPlayer.getHand().remove(card);
+
                         return null;
                     }
+                } else {
+                    return Constants.Error.CHOSEN_ROW_NOT_ENEMY;
                 }
-                else {
-                    return "Chosen row does not belong to the enemy.";
-                }
+            } else {
+                return Constants.Error.ENVIRONMENT_NO_MANA;
             }
-            else {
-                return "Not enough mana to use environment card.";
-            }
-        }
-        else {
-            return "Chosen card is not of type environment.";
+        } else {
+            return Constants.Error.NOT_ENVIRONMENT;
         }
     }
 
-    public String attackMinion(int x1, int y1, int x2, int y2) {
+    /**
+     *
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return
+     */
+    public String attackMinion(final int x1, final int y1, final int x2, final int y2) {
         Minion cardAttacker, cardAttacked;
 
-        if ((currPlayerIdx == 1 && (x2 == 3 || x2 == 2)) || (currPlayerIdx == 2 && (x2 == 1 || x2 == 0)))
-            return "Attacked card does not belong to the enemy.";
+        if ((currPlayerIdx == 1 && (x2 == Constants.Integers.PLAYER_ONE_FRONT_ROW
+            || x2 == Constants.Integers.PLAYER_ONE_BACK_ROW))
+            || (currPlayerIdx == 2 && (x2 == Constants.Integers.PLAYER_TWO_FRONT_ROW
+            || x2 == Constants.Integers.PLAYER_TWO_BACK_ROW))) {
+            return Constants.Error.CARD_NOT_ENEMY;
+        }
 
         try {
             cardAttacker = table.get(x1).get(y1);
             cardAttacked = table.get(x2).get(y2);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
-        if (cardAttacker.hasAttacked())
-            return "Attacker card has already attacked this turn.";
+        if (cardAttacker.hasAttacked()) {
+            return Constants.Error.CARD_ALREADY_ATTACKED;
+        }
 
-        if (cardAttacker.isFrozen())
-            return "Attacker card is frozen.";
+        if (cardAttacker.isFrozen()) {
+            return Constants.Error.FROZEN;
+        }
 
         if (!(cardAttacked instanceof Tank)) {
-            if (currPlayerIdx == 1) {
-                for (Minion minion : table.get(1))
-                    if (minion instanceof Tank) {
-                        return "Attacked card is not of type 'Tank'.";
-                    }
-            } else {
-                for (Minion minion : table.get(2))
-                    if (minion instanceof Tank) {
-                        return "Attacked card is not of type 'Tank'.";
-                    }
+            for (Minion minion : table.get(currPlayerIdx)) {
+                if (minion instanceof Tank) {
+                    return Constants.Error.NOT_TANK;
+                }
             }
         }
 
         cardAttacker.attackMinion(cardAttacked);
 
-        if (cardAttacked.getHealth() == 0)
+        if (cardAttacked.getHealth() == 0) {
             table.get(x2).remove(cardAttacked);
+        }
 
         return null;
     }
 
-    public String minionUseAbility(int x1, int y1, int x2, int y2) {
+    /**
+     *
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return
+     */
+    public String minionUseAbility(final int x1, final int y1, final int x2, final int y2) {
         Minion cardAttacker, cardAttacked;
 
         try {
             cardAttacker = table.get(x1).get(y1);
             cardAttacked = table.get(x2).get(y2);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
-        if (cardAttacker.isFrozen())
-            return "Attacker card is frozen.";
+        if (cardAttacker.isFrozen()) {
+            return Constants.Error.FROZEN;
+        }
 
-        if (cardAttacker.hasAttacked())
-            return "Attacker card has already attacked this turn.";
+        if (cardAttacker.hasAttacked()) {
+            return Constants.Error.CARD_ALREADY_ATTACKED;
+        }
 
         if (cardAttacker instanceof Disciple) {
-            if ((currPlayerIdx == 1 && (x2 == 1 || x2 == 0)) || (currPlayerIdx == 2 && (x2 == 3 || x2 == 2)))
-            return "Attacked card does not belong to the current player.";
-        } else if (cardAttacker instanceof TheRipper || cardAttacker instanceof Miraj ||
-                    cardAttacker instanceof TheCursedOne) {
-            if ((currPlayerIdx == 1 && (x2 == 3 || x2 == 2)) || (currPlayerIdx == 2 && (x2 == 1 || x2 == 0)))
-                return "Attacked card does not belong to the enemy.";
+            if ((currPlayerIdx == 1 && (x2 == Constants.Integers.PLAYER_TWO_FRONT_ROW
+                || x2 == Constants.Integers.PLAYER_TWO_BACK_ROW))
+                || (currPlayerIdx == 2 && (x2 == Constants.Integers.PLAYER_ONE_FRONT_ROW
+                || x2 == Constants.Integers.PLAYER_ONE_BACK_ROW))) {
+                return Constants.Error.CARD_NOT_CURRENT;
+            }
+        } else if (cardAttacker instanceof TheRipper || cardAttacker instanceof Miraj
+                || cardAttacker instanceof TheCursedOne) {
+            if ((currPlayerIdx == 1 && (x2 == Constants.Integers.PLAYER_ONE_FRONT_ROW
+                || x2 == Constants.Integers.PLAYER_ONE_BACK_ROW))
+                || (currPlayerIdx == 2 && (x2 == Constants.Integers.PLAYER_TWO_FRONT_ROW
+                || x2 == Constants.Integers.PLAYER_TWO_BACK_ROW))) {
+                return Constants.Error.CARD_NOT_ENEMY;
+            }
 
             if (!(cardAttacked instanceof Tank)) {
-                if (currPlayerIdx == 1) {
-                    for (Minion minion : table.get(1))
-                        if (minion instanceof Tank) {
-                            return "Attacked card is not of type 'Tank'.";
-                        }
-                } else {
-                    for (Minion minion : table.get(2))
-                        if (minion instanceof Tank) {
-                            return "Attacked card is not of type 'Tank'.";
-                        }
+                for (Minion minion : table.get(currPlayerIdx)) {
+                    if (minion instanceof Tank) {
+                        return Constants.Error.NOT_TANK;
+                    }
                 }
             }
         }
 
-        if (cardAttacker instanceof Miraj)
-            ((Miraj)cardAttacker).action(cardAttacked);
-        if (cardAttacker instanceof TheRipper)
-            ((TheRipper)cardAttacker).action(cardAttacked);
-        if (cardAttacker instanceof TheCursedOne)
-            ((TheCursedOne)cardAttacker).action(cardAttacked);
-        if (cardAttacker instanceof Disciple)
-            ((Disciple)cardAttacker).action(cardAttacked);
+        if (cardAttacker instanceof Miraj) {
+            ((Miraj) cardAttacker).action(cardAttacked);
+        }
+        if (cardAttacker instanceof TheRipper) {
+            ((TheRipper) cardAttacker).action(cardAttacked);
+        }
+        if (cardAttacker instanceof TheCursedOne) {
+            ((TheCursedOne) cardAttacker).action(cardAttacked);
+        }
+        if (cardAttacker instanceof Disciple) {
+            ((Disciple) cardAttacker).action(cardAttacked);
+        }
 
-        if (cardAttacked.getHealth() == 0)
+        if (cardAttacked.getHealth() == 0) {
             table.get(x2).remove(cardAttacked);
+        }
 
         return null;
     }
 
-    public String minionAttackHero(int x, int y) {
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    public String minionAttackHero(final int x, final int y) {
         Minion cardAttacker;
 
         try {
             cardAttacker = table.get(x).get(y);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
 
-        if (cardAttacker.isFrozen())
-            return "Attacker card is frozen.";
-
-        if (cardAttacker.hasAttacked())
-            return "Attacker card has already attacked this turn.";
-
-        if (currPlayerIdx == 1) {
-            for (Minion minion : table.get(1))
-                if (minion instanceof Tank) {
-                    return "Attacked card is not of type 'Tank'.";
-                }
-        } else {
-            for (Minion minion : table.get(2))
-                if (minion instanceof Tank) {
-                    return "Attacked card is not of type 'Tank'.";
-                }
+        if (cardAttacker.isFrozen()) {
+            return Constants.Error.FROZEN;
         }
 
-        Hero hero = this.getPlayerHero(3 - currPlayerIdx);
+        if (cardAttacker.hasAttacked()) {
+            return Constants.Error.CARD_ALREADY_ATTACKED;
+        }
+
+        if (currPlayerIdx == 1) {
+            for (Minion minion : table.get(1)) {
+                if (minion instanceof Tank) {
+                    return Constants.Error.NOT_TANK;
+                }
+            }
+        } else {
+            for (Minion minion : table.get(2)) {
+                if (minion instanceof Tank) {
+                    return Constants.Error.NOT_TANK;
+                }
+            }
+        }
+
+        Hero hero = this.getPlayerHero(Constants.Integers.MIRROR - currPlayerIdx);
         cardAttacker.attackHero(hero);
 
-        if (hero.getHealth() == 0)
+        if (hero.getHealth() == 0) {
             return Integer.toString(currPlayerIdx);
+        }
 
         return null;
     }
 
-    public String useHeroAbility(int affectedRow) {
+    /**
+     *
+     * @param affectedRow
+     * @return
+     */
+    public String useHeroAbility(final int affectedRow) {
         Hero hero = this.getCurrPlayer().getHero();
 
-        if (this.getCurrPlayer().getMana() < hero.getMana())
-            return "Not enough mana to use hero's ability.";
+        if (this.getCurrPlayer().getMana() < hero.getMana()) {
+            return Constants.Error.HERO_NO_MANA;
+        }
 
-        if (hero.hasAttacked())
-            return "Hero has already attacked this turn.";
+        if (hero.hasAttacked()) {
+            return Constants.Error.HERO_ALREADY_ATTACKED;
+        }
 
         if (hero instanceof LordRoyce || hero instanceof EmpressThorina) {
-            if ((currPlayerIdx == 1 && (affectedRow == 3 || affectedRow == 2)) || (currPlayerIdx == 2 &&
-                    (affectedRow == 1 || affectedRow == 0))) {
-                System.out.println(affectedRow);
-                System.out.println(currPlayerIdx);
-                return "Selected row does not belong to the enemy.";
+            if ((currPlayerIdx == 1 && (affectedRow == Constants.Integers.PLAYER_ONE_FRONT_ROW
+                || affectedRow == Constants.Integers.PLAYER_ONE_BACK_ROW))
+                || (currPlayerIdx == 2 && (affectedRow == Constants.Integers.PLAYER_TWO_FRONT_ROW
+                || affectedRow == Constants.Integers.PLAYER_TWO_BACK_ROW))) {
+                return Constants.Error.SELECTED_ROW_NOT_ENEMY;
             }
         } else if (hero instanceof GeneralKocioraw || hero instanceof KingMudface) {
-            if ((currPlayerIdx == 1 && (affectedRow == 1 || affectedRow == 0)) || (currPlayerIdx == 2 &&
-                    (affectedRow == 3 || affectedRow == 2))) {
-                return "Selected row does not belong to the current player.";
+            if ((currPlayerIdx == 1 && (affectedRow == Constants.Integers.PLAYER_TWO_FRONT_ROW
+                || affectedRow == Constants.Integers.PLAYER_TWO_BACK_ROW))
+                || (currPlayerIdx == 2 && (affectedRow == Constants.Integers.PLAYER_ONE_FRONT_ROW
+                || affectedRow == Constants.Integers.PLAYER_ONE_BACK_ROW))) {
+                return Constants.Error.SELECTED_ROW_NOT_CURRENT;
             }
         }
 
         ArrayList<Minion> minions = this.getTable().get(affectedRow);
 
-        if (hero instanceof EmpressThorina)
-            ((EmpressThorina)hero).action(minions);
+        if (hero instanceof EmpressThorina) {
+            ((EmpressThorina) hero).action(minions);
+        }
 
-        if (hero instanceof GeneralKocioraw)
-            ((GeneralKocioraw)hero).action(minions);
+        if (hero instanceof GeneralKocioraw) {
+            ((GeneralKocioraw) hero).action(minions);
+        }
 
-        if (hero instanceof KingMudface)
-            ((KingMudface)hero).action(minions);
+        if (hero instanceof KingMudface) {
+            ((KingMudface) hero).action(minions);
+        }
 
-        if (hero instanceof LordRoyce)
-            ((LordRoyce)hero).action(minions);
+        if (hero instanceof LordRoyce) {
+            ((LordRoyce) hero).action(minions);
+        }
 
         this.getCurrPlayer().setMana(this.getCurrPlayer().getMana() - hero.getMana());
         hero.setHasAttacked(true);

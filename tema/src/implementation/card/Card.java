@@ -9,50 +9,55 @@ import implementation.card.minion.Minion;
 import java.util.ArrayList;
 
 public abstract class Card {
-    protected int mana;
-    protected String description;
-    protected ArrayList<String> colors;
-    protected String name;
+    protected final int mana;
+    protected final String description;
+    protected final ArrayList<String> colors;
+    protected final String name;
 
-    public Card(int mana, String description, ArrayList<String> colors, String name) {
+    public Card(final int mana, final String description, final ArrayList<String> colors,
+                final String name) {
         this.mana = mana;
         this.description = description;
         this.colors = colors;
         this.name = name;
     }
 
+    /**
+     *
+     * @return mana
+     */
     public int getMana() {
         return mana;
     }
 
-    public void setMana(int mana) {
-        this.mana = mana;
-    }
-
+    /**
+     *
+     * @return description
+     */
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    /**
+     *
+     * @return colors
+     */
     public ArrayList<String> getColors() {
         return colors;
     }
 
-    public void setColors(ArrayList<String> colors) {
-        this.colors = colors;
-    }
-
+    /**
+     *
+     * @return name
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    /**
+     * Creates a different ObjectNode based on what type of card it is
+     * @return an ObjectNode for the output
+     */
     public ObjectNode createCardNode() {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode o = objectMapper.createObjectNode();
@@ -71,12 +76,17 @@ public abstract class Card {
 
         o.put("name", this.getName());
 
-        if (this instanceof Hero)
+        if (this instanceof Hero) {
             o.put("health", ((Hero) this).getHealth());
+        }
 
         return o;
     }
 
+    /**
+     *
+     * @return colors ArrayNode
+     */
     public ArrayNode createColorsNode() {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode colorsArrayNode = objectMapper.createArrayNode();
@@ -86,15 +96,5 @@ public abstract class Card {
         }
 
         return colorsArrayNode;
-    }
-
-    @Override
-    public String toString() {
-        return "Card{" +
-                "mana=" + mana +
-                ", description='" + description + '\'' +
-                ", colors=" + colors +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

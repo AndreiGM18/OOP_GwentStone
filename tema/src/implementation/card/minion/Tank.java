@@ -3,11 +3,12 @@ package implementation.card.minion;
 import java.util.ArrayList;
 
 public class Tank extends Minion {
-    public Tank(int mana, String description, ArrayList<String> colors, int health, int attackDamage, String name) {
+    public Tank(final int mana, final String description, final ArrayList<String> colors,
+                final int health, final int attackDamage, final String name) {
         super(mana, description, colors, health, attackDamage, name);
     }
 
-    public Tank(Minion minion) {
+    public Tank(final Minion minion) {
         super(minion);
     }
 }

@@ -80,7 +80,7 @@ public final class ActionsInput {
     @Override
     public String toString() {
         return "ActionsInput{"
-                +  "command='"
+                +  "commandhandler='"
                 + command + '\''
                 +  ", handIdx="
                 + handIdx
