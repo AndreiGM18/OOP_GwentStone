@@ -3,7 +3,7 @@ package implementation;
 import implementation.card.Card;
 import implementation.card.environment.Environment;
 import implementation.card.hero.Hero;
-import implementation.card.minion.*;
+import implementation.card.minion.Minion;
 
 import java.util.ArrayList;
 
@@ -114,22 +114,7 @@ public class Player {
                     return "Cannot place card on table since row is full.";
                 else {
                     this.mana -= card.getMana();
-                    Minion minion;
-                    if (card instanceof Tank)
-                        minion = new Tank((Tank) card);
-                    else if (card instanceof Disciple)
-                        minion = new Disciple((Disciple) card);
-                    else if (card instanceof Miraj)
-                        minion = new Miraj((Miraj) card);
-                    else if (card instanceof TheCursedOne)
-                        minion = new TheCursedOne((TheCursedOne) card);
-                    else if (card instanceof TheRipper)
-                       minion = new TheRipper((TheRipper) card);
-                    else
-                        minion = new Minion((Minion) card);
-
-                    game.getTable().get(idx).add(minion);
-
+                    game.getTable().get(idx).add((Minion) card);
                     hand.remove(card);
                     return null;
                 }
@@ -154,10 +139,6 @@ public class Player {
 
     public ArrayList<Card> getHand() {
         return hand;
-    }
-
-    public void setHand(ArrayList<Card> hand) {
-        this.hand = hand;
     }
 
     public ArrayList<Card> getDeck(int idx) {

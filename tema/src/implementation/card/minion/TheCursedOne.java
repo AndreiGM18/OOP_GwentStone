@@ -7,10 +7,6 @@ public class TheCursedOne extends Minion {
         super(mana, description, colors, health, attackDamage, name);
     }
 
-    public TheCursedOne(Minion minion) {
-        super(minion);
-    }
-
     public void action(Minion minion) {
         int hp = minion.getHealth();
         int atk = minion.getAttackDamage();
