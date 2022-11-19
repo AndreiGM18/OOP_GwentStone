@@ -17,6 +17,12 @@ public class Minion extends Card {
         this.attackDamage = attackDamage;
     }
 
+    public Minion(Minion minion) {
+        super(minion.mana, minion.description, minion.colors, minion.name);
+        this.health = minion.health;
+        this.attackDamage = minion.attackDamage;
+    }
+
     public int getHealth() {
         return health;
     }
@@ -50,7 +56,7 @@ public class Minion extends Card {
     }
 
     public void attackMinion(Minion minion) {
-        minion.setHealth(minion.getHealth() - this.attackDamage);
+        minion.setHealth(Math.max(minion.getHealth() - this.attackDamage, 0));
         this.hasAttacked = true;
     }
 
