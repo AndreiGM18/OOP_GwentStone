@@ -2,6 +2,7 @@ package implementation.card.hero;
 
 import constants.Constants;
 import implementation.card.Card;
+import implementation.card.minion.Minion;
 
 import java.util.ArrayList;
 
@@ -14,35 +15,26 @@ public abstract class Hero extends Card {
         super(mana, description, colors, name);
     }
 
-    /**
-     *
-     * @return health
-     */
-    public int getHealth() {
+    public final int getHealth() {
         return health;
     }
 
-    /**
-     * Sets tne new health
-     * @param health new health
-     */
-    public void setHealth(final int health) {
+    public final void setHealth(final int health) {
         this.health = health;
     }
 
-    /**
-     *
-     * @return whether the card has attacked or not
-     */
-    public boolean hasAttacked() {
+    public final boolean getHasAttacked() {
         return hasAttacked;
     }
 
-    /**
-     * Sets whether the card has attacked or not
-     * @param hasAttacked whether the card has attacked or not
-     */
-    public void setHasAttacked(final boolean hasAttacked) {
+    public final void setHasAttacked(final boolean hasAttacked) {
         this.hasAttacked = hasAttacked;
+    }
+
+    /**
+     * Generic action function; is overridden
+     * @param minions the row on which the ability is used on
+     */
+    public void action(final ArrayList<Minion> minions) {
     }
 }

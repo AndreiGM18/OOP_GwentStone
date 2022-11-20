@@ -19,8 +19,8 @@ import implementation.card.hero.GeneralKocioraw;
 import implementation.card.hero.KingMudface;
 import implementation.card.hero.LordRoyce;
 
-import implementation.card.minion.Minion;
 import implementation.card.minion.Disciple;
+import implementation.card.minion.Generic;
 import implementation.card.minion.Miraj;
 import implementation.card.minion.Tank;
 import implementation.card.minion.TheCursedOne;
@@ -32,24 +32,40 @@ public final class Setup {
     private Setup() {
     }
     /**
-     *
-     * @param inputData
-     * @param nr
-     * @return
+     * Sets up a player (independent of a specific game)
+     * @param inputData all input is stored here
+     * @param idx the player's index
+     * @return a player with
      */
-    public static Player setupPlayer(final Input inputData, final int nr) {
+    public static Player setupPlayer(final Input inputData, final int idx) {
         DecksInput decksData;
 
-        if (nr == 1) {
+        /*
+        Gets the specified player's decks
+         */
+        if (idx == 1) {
             decksData = inputData.getPlayerOneDecks();
         } else {
             decksData = inputData.getPlayerTwoDecks();
         }
 
+        /*
+        A new list of decks
+         */
         ArrayList<ArrayList<Card>> decksPlayer = new ArrayList<>();
+
+        /*
+        For every deck's input
+         */
         for (int i = 0; i < decksData.getNrDecks(); i++) {
+            /*
+            A new list of cards (A new deck)
+             */
             ArrayList<Card> deck = new ArrayList<>();
 
+            /*
+            For every card's input (in every deck)
+             */
             for (int j = 0; j < decksData.getNrCardsInDeck(); j++) {
                 Card card;
 
@@ -62,6 +78,9 @@ public final class Setup {
                 int health = cardInput.getHealth();
                 String name = cardInput.getName();
 
+                /*
+                Creates a new card
+                 */
                 card = switch (name) {
                     case "Goliath", "Warden" ->
                             new Tank(mana, description, colors, health, attackDamage, name);
@@ -80,22 +99,31 @@ public final class Setup {
                     case "Heart Hound" ->
                             new HeartHound(mana, description, colors, name);
                     default ->
-                            new Minion(mana, description, colors, health, attackDamage, name);
+                            new Generic(mana, description, colors, health, attackDamage, name);
                 };
 
+                /*
+                Adds the card
+                 */
                 deck.add(card);
             }
 
+            /*
+            Adds the deck
+             */
             decksPlayer.add(deck);
         }
 
+        /*
+        Creates a new player (further adjustments in order to play a game are made)
+         */
         return new Player(decksData.getNrCardsInDeck(), decksData.getNrDecks(), decksPlayer);
     }
 
     /**
-     *
-     * @param heroInput
-     * @return
+     * Creates a hero card
+     * @param heroInput the hero card's input
+     * @return the hero
      */
     public static Hero setupHero(final CardInput heroInput) {
         String description = heroInput.getDescription();
@@ -113,13 +141,15 @@ public final class Setup {
     }
 
     /**
-     *
-     * @param inputData
-     * @param nr
-     * @param game
+     * Sets up the necessary parameters for a game to take place
+     * Adds a card into each player's hand
+     * Calls the setup function from the Game instance
+     * @param inputData all input is stored here
+     * @param number which game it is
+     * @param game the Game instance
      */
-    public static void setupGame(final Input inputData, final int nr, final Game game) {
-        StartGameInput startGameInput = inputData.getGames().get(nr).getStartGame();
+    public static void setupGame(final Input inputData, final int number, final Game game) {
+        StartGameInput startGameInput = inputData.getGames().get(number).getStartGame();
 
         int playerOneIdx = startGameInput.getPlayerOneDeckIdx();
         int playerTwoIdx = startGameInput.getPlayerTwoDeckIdx();
@@ -130,6 +160,9 @@ public final class Setup {
 
         game.setup(playerOneIdx, playerTwoIdx, shuffleSeed, hero1, hero2, startingPlayer);
 
+        /*
+        Adds the first card into each player's hand
+         */
         game.getPlayer1().addCardHand();
         game.getPlayer2().addCardHand();
     }

@@ -18,5 +18,7 @@ public class GeneralKocioraw extends Hero {
         for (Minion minion : minions) {
             minion.setAttackDamage(minion.getAttackDamage() + 1);
         }
+
+        this.hasAttacked = true;
     }
 }

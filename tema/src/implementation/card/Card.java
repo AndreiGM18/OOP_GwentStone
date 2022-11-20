@@ -22,35 +22,19 @@ public abstract class Card {
         this.name = name;
     }
 
-    /**
-     *
-     * @return mana
-     */
-    public int getMana() {
+    public final int getMana() {
         return mana;
     }
 
-    /**
-     *
-     * @return description
-     */
-    public String getDescription() {
+    public final String getDescription() {
         return description;
     }
 
-    /**
-     *
-     * @return colors
-     */
-    public ArrayList<String> getColors() {
+    public final ArrayList<String> getColors() {
         return colors;
     }
 
-    /**
-     *
-     * @return name
-     */
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
@@ -96,5 +80,11 @@ public abstract class Card {
         }
 
         return colorsArrayNode;
+    }
+
+    /**
+     * Generic action function; is overridden
+     */
+    public void action() {
     }
 }

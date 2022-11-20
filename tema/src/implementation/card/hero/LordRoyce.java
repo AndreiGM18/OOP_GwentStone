@@ -19,5 +19,7 @@ public class LordRoyce extends Hero {
         if (minions.stream().max(new MaxByATK()).isPresent()) {
             minions.stream().max(new MaxByATK()).get().setFrozen(true);
         }
+
+        this.hasAttacked = true;
     }
 }

@@ -1,5 +1,8 @@
 package constants;
 
+/**
+ * Constant class - used in order to handle magic numbers and strings
+ */
 public class Constants {
     public static class Command {
         public static final String COMMAND = "command";
@@ -82,6 +85,6 @@ public class Constants {
         public static final int NUMBER_OF_ROWS = 4;
         public static final int MAX_MANA_INCREASE = 10;
         public static final int MAX_CARDS = 5;
-        public static final int MIRROR = 3;
+        public static final int OPPOSITE = 3;
     }
 }

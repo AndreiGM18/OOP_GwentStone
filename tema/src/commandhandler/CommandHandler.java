@@ -18,15 +18,6 @@ public final class CommandHandler {
     private CommandHandler() {
     }
 
-    /**
-     *
-     * @param node
-     * @param error
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
-     */
     static void handleAttackerAttackedError(final ObjectNode node, final String error,
                                             final int x1, final int y1,
                                             final int x2, final int y2) {
@@ -369,27 +360,42 @@ public final class CommandHandler {
             output.add(node);
         }
     }
+
     /**
-     *
-     * @param inputData
-     * @param output
+     * Handles all commands + sets up the players and each game
+     * A command may not return anything, it may return an output or an error.
+     * Each helper function above is used to call another function from the current
+     * Game instance.
+     * Each helper function above simply creates ObjectNodes and ArrayNodes and adds
+     * them into the output ArrayNode.
+     * Each Game function returns an error String if the command fails.
+     * That error is then added into the output ArrayNode, like any other normal output
+     * @param inputData all input is stored here
+     * @param output an ArrayNode that is to be written in the output file
      */
     public static void commandHandler(final Input inputData, final ArrayNode output) {
         ObjectMapper objectMapper = new ObjectMapper();
 
+        /*
+        Creates and sets up the players (independent of the games)
+        */
         Player player1 = Setup.setupPlayer(inputData, 1);
         Player player2 = Setup.setupPlayer(inputData, 2);
 
+        /*
+        For all games, it creates and sets up the specified game
+        */
         for (int i = 0; i < inputData.getGames().size(); i++) {
-            player1.setHand(new ArrayList<>());
-            player2.setHand(new ArrayList<>());
-
             Game game = new Game(player1, player2);
 
             Setup.setupGame(inputData, i, game);
 
             ArrayList<ActionsInput> actionsInput = inputData.getGames().get(i).getActions();
 
+            /*
+            Goes through all commands, even if the game ended
+            (There may be further debug commands)
+            */
             for (ActionsInput action : actionsInput) {
                 String command = action.getCommand();
 

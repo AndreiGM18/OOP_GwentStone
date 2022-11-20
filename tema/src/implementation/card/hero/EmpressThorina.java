@@ -19,5 +19,7 @@ public class EmpressThorina extends Hero {
         if (minions.stream().max(new MaxByHP()).isPresent()) {
             minions.remove(minions.stream().max(new MaxByHP()).get());
         }
+
+        this.hasAttacked = true;
     }
 }
